@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cyberdyne — Decentralized Dev Platform</title>
+  <meta name="description" content="Cyberdyne: a DAO-first, AI + Web3 developer platform that pays for itself. Build, automate, deploy — with neon‑smooth vibes." />
+  <meta name="theme-color" content="#0b0f1c" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Inter:wght@300..900&display=swap" rel="stylesheet">
+  <style>
+    /* --- Root & Reset --- */
+    :root{
+      --bg: #070a12;          /* deep space */
+      --panel: #0b1020;
+      --ink: #e6f1ff;         /* near-white */
+      --muted: #94a3b8;       /* slate */
+      --accent: #00e5ff;      /* cyan */
+      --accent-2: #ff3bf0;    /* magenta */
+      --accent-3: #8aff6c;    /* lime */
+      --ring: rgba(0, 229, 255, .5);
+      --shadow: 0 10px 30px rgba(0,0,0,.5), 0 0 40px rgba(0,229,255,.08);
+      --radius: 18px;
+      --maxw: 1200px;
+    }
+    *, *::before, *::after{ box-sizing: border-box; }
+    html, body{ height: 100%; }
+    body{
+      margin:0; font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+      color: var(--ink); background: var(--bg);
+      line-height: 1.55; letter-spacing: .2px;
+      overflow-x: hidden;
+    }
+    a{ color: inherit; text-decoration: none; }
+    img{ max-width:100%; display:block; }
+    .container{ width: min(100% - 2rem, var(--maxw)); margin-inline: auto; }
+
+    /* --- Background FX --- */
+    .bg-grid{
+      position: fixed; inset: 0; z-index: -2;
+      background:
+        radial-gradient(1200px 600px at var(--mx,50%) var(--my,40%), rgba(0,229,255,.12), transparent 60%),
+        radial-gradient(900px 400px at calc(var(--mx,50%)+20%) calc(var(--my,40%)+20%), rgba(255,59,240,.08), transparent 55%),
+        linear-gradient(180deg, #05070d, #0a0f1e);
+    }
+    .bg-grid::before{
+      content:""; position:absolute; inset:0; opacity:.25; pointer-events:none;
+      background-size: 60px 60px, 60px 60px; 
+      background-image:
+        linear-gradient(transparent 59px, rgba(255,255,255,.06) 60px),
+        linear-gradient(90deg, transparent 59px, rgba(255,255,255,.06) 60px);
+      mask: radial-gradient(800px 500px at 50% 30%, black, transparent 70%);
+    }
+    .float-orb{ position: absolute; width: 42vmin; aspect-ratio:1; border-radius:50%; filter: blur(40px); opacity:.25; z-index:-1; }
+    .orb-a{ background: radial-gradient(circle at 30% 30%, var(--accent), transparent 60%); top:20%; left:-10%; animation: drift 18s ease-in-out infinite alternate; }
+    .orb-b{ background: radial-gradient(circle at 70% 70%, var(--accent-2), transparent 60%); bottom:10%; right:-10%; animation: drift2 22s ease-in-out infinite alternate; }
+    @keyframes drift{ from{ transform: translate(0,0)} to{ transform: translate(12vw,-4vh)} }
+    @keyframes drift2{ from{ transform: translate(0,0)} to{ transform: translate(-8vw,6vh)} }
+
+    /* --- Top Nav --- */
+    .nav{
+      position: sticky; top:0; backdrop-filter: saturate(140%) blur(10px);
+      background: linear-gradient(180deg, rgba(7,10,18,.9), rgba(7,10,18,.6));
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      z-index: 50;
+    }
+    .nav-inner{ display:flex; align-items:center; justify-content:space-between; gap: 1rem; padding: .9rem 0; }
+    .brand{ display:flex; align-items:center; gap:.8rem; font-weight:700; letter-spacing:.5px; }
+    .logo{ width: 36px; height:36px; border-radius:10px; background:
+      conic-gradient(from 180deg, var(--accent), var(--accent-2), var(--accent-3), var(--accent));
+      box-shadow: 0 0 24px rgba(0,229,255,.35) inset, 0 0 30px rgba(255,59,240,.18) inset;
+    }
+    .brand span{ font-family: "Space Grotesk", sans-serif; font-size: 1.05rem; }
+    .chip{ font-size:.7rem; padding:.2rem .5rem; border:1px solid rgba(255,255,255,.15); border-radius:20px; color:var(--muted); }
+    .nav a{ color: var(--muted); font-weight:500; }
+    .nav ul{ display:flex; gap:1.2rem; align-items:center; }
+    .nav .ghost{ border:1px solid rgba(255,255,255,.15); padding:.55rem .9rem; border-radius: 999px; }
+
+    /* --- Hero --- */
+    .hero{ position: relative; padding: clamp(48px, 10vh, 120px) 0 64px; }
+    .hero-grid{ display:grid; grid-template-columns: 1.2fr .8fr; gap: 2rem; align-items:center; }
+    .eyebrow{ font-family:"Space Grotesk"; letter-spacing: .18em; font-size: .75rem; color: var(--muted); text-transform: uppercase; }
+    .title{ font-family: "Space Grotesk"; font-weight: 800; line-height: 1.05; margin: .6rem 0 1rem; font-size: clamp(2.2rem, 5.2vw, 4.8rem); }
+    .title .gradient{ background: linear-gradient(90deg, var(--accent), var(--accent-2) 45%, var(--accent-3)); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 6px 24px rgba(0,229,255,.25)); }
+    .subtitle{ color: #c8d6ff; font-size: clamp(1rem, 1.2vw + .8rem, 1.25rem); max-width: 60ch; }
+    .actions{ display:flex; gap:.9rem; flex-wrap: wrap; margin-top: 1.2rem; }
+
+    .btn{ --p: .95rem; padding: var(--p) 1.2rem; border-radius: 14px; border: 1px solid rgba(255,255,255,.14);
+          background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+          box-shadow: var(--shadow); display:inline-flex; align-items:center; gap:.6rem; font-weight: 700; letter-spacing:.2px; }
+    .btn.primary{ background: radial-gradient(120% 180% at 0% 0%, rgba(0,229,255,.25), transparent 30%), linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02)); border-color: var(--ring); }
+    .btn:hover{ transform: translateY(-1px); box-shadow: 0 10px 25px rgba(0,229,255,.22), 0 0 0 1px rgba(255,255,255,.06) inset; }
+    .btn svg{ width: 18px; height: 18px; }
+
+    .hero-badges{ display:flex; flex-wrap: wrap; gap:.5rem; margin-top: 1.2rem; }
+    .badge{ font-size:.8rem; color:#b7c6ff; padding:.35rem .6rem; border:1px dashed rgba(255,255,255,.18); border-radius:999px; backdrop-filter: blur(6px); }
+
+    .hero-panel{ background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)); border:1px solid rgba(255,255,255,.1); border-radius: var(--radius); padding: 1rem; position: relative; box-shadow: var(--shadow); }
+    .termbar{ display:flex; align-items:center; justify-content:space-between; padding:.4rem .6rem .6rem; }
+    .dots{ display:flex; gap:.35rem; }
+    .dot{ width:10px; height:10px; border-radius:50%; }
+    .dot.red{ background:#ff5f57 } .dot.yellow{ background:#ffbd2e } .dot.green{ background:#28c840 }
+    .terminal{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; background: #060913; border-radius: 12px; padding: 1rem; border:1px solid rgba(255,255,255,.06); min-height:240px; color:#d7e3ff; }
+    .prompt{ color: #7ee787; }
+    .caret{ display:inline-block; width:.6em; background: #d7e3ff; height:1em; vertical-align: -.2em; animation: blink 1.05s steps(1,end) infinite; }
+    @keyframes blink{ 50%{ opacity: 0; } }
+
+    /* --- Sections --- */
+    section{ padding: 72px 0; }
+    .section-title{ font-family: "Space Grotesk"; font-weight: 800; letter-spacing:.2px; font-size: clamp(1.4rem, 3vw, 2.2rem); margin-bottom: .6rem; }
+    .section-kicker{ color: var(--muted); margin-bottom: 1.4rem; }
+
+    .grid{ display:grid; gap: 1rem; }
+    .grid.features{ grid-template-columns: repeat(12, 1fr); }
+    .card{ position: relative; border-radius: var(--radius); border:1px solid rgba(255,255,255,.1); background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)); box-shadow: var(--shadow); padding: 1.1rem; overflow: hidden; }
+    .card .shine{ position:absolute; inset:-2px; background: conic-gradient(from 210deg at 50% 50%, rgba(0,229,255,.22), rgba(255,59,240,.2), rgba(138,255,108,.18), rgba(0,229,255,.22)); filter: blur(22px); opacity:.12; pointer-events:none; }
+    .card h3{ font-size: 1.05rem; margin:.1rem 0 .4rem; font-weight: 800; font-family:"Space Grotesk"; }
+    .card p{ color:#c8d6ff; font-size:.95rem; }
+    .card:hover{ transform: translateY(-2px); }
+
+    .span-4{ grid-column: span 4; }
+    .span-6{ grid-column: span 6; }
+    .span-8{ grid-column: span 8; }
+
+    .icon{ width: 22px; height:22px; color: var(--accent); }
+
+    /* --- Products --- */
+    .products{ display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:1rem; }
+    .product h4{ font-size:1.2rem; margin:.2rem 0 .4rem; font-weight:800; font-family:"Space Grotesk"; }
+    .tag{ display:inline-block; font-size:.75rem; color:#b7c6ff; border:1px solid rgba(255,255,255,.16); padding:.2rem .5rem; border-radius:999px; margin-right:.4rem; }
+
+    /* --- Tokenomics --- */
+    .tokenomics{ display:grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; align-items:center; }
+    .donut{ --t1:40; --t2:20; --t3:20; --t4:10; --t5:10; width: 240px; aspect-ratio:1; border-radius:50%;
+      background: conic-gradient(var(--accent) calc(var(--t1)*1%), var(--accent-2) 0 calc((var(--t1)+var(--t2))*1%), var(--accent-3) 0 calc((var(--t1)+var(--t2)+var(--t3))*1%), #7aa2ff 0 calc((var(--t1)+var(--t2)+var(--t3)+var(--t4))*1%), #ffd166 0);
+      position:relative; margin:auto; box-shadow: 0 0 0 10px rgba(255,255,255,.04) inset, var(--shadow);
+    }
+    .donut::after{ content:""; position:absolute; inset: 20%; background: #060913; border-radius:50%; box-shadow: inset 0 0 0 1px rgba(255,255,255,.12); }
+    .legend{ display:grid; grid-template-columns: 1fr 1fr; gap:.6rem 1rem; }
+    .legend .item{ display:flex; align-items:center; gap:.5rem; color:#cfe0ff; font-size:.95rem; }
+    .swatch{ width:.9rem; height:.9rem; border-radius:4px; }
+
+    /* --- Pricing --- */
+    .pricing{ display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:1rem; }
+    .price-card h3{ font-size: 1.25rem; margin:.2rem 0 .6rem; font-family:"Space Grotesk"; }
+    .price{ font-size: 2rem; font-weight: 800; }
+    .price small{ font-weight: 500; color: var(--muted); }
+    .features-list{ margin:.6rem 0 0; color:#c8d6ff; }
+    .features-list li{ margin:.3rem 0; }
+
+    /* --- Roadmap --- */
+    .timeline{ position: relative; margin-top:.6rem; }
+    .timeline::before{ content:""; position:absolute; left: 10px; top: 0; bottom: 0; width: 2px; background: linear-gradient(var(--accent), transparent); opacity:.6; }
+    .milestone{ position:relative; padding-left: 2.2rem; margin: 1rem 0; }
+    .milestone::before{ content:""; position:absolute; left: 3px; top:.25rem; width:14px; height:14px; border-radius:50%; background: radial-gradient(circle, var(--accent), #0ff); box-shadow: 0 0 0 4px rgba(0,229,255,.15); }
+    .milestone h4{ margin:0; font-family:"Space Grotesk"; font-size:1.05rem; }
+    .milestone p{ margin:.25rem 0 0; color:#c8d6ff; }
+
+    /* --- Footer --- */
+    footer{ padding: 48px 0 72px; border-top:1px solid rgba(255,255,255,.06); color:#a6b4d8; }
+    .footgrid{ display:grid; grid-template-columns: 1.2fr .8fr; gap:1rem; align-items:start; }
+    .socials{ display:flex; gap:.6rem; }
+    .socials a{ padding:.6rem .7rem; border:1px solid rgba(255,255,255,.12); border-radius:12px; }
+
+    /* --- Utilities --- */
+    .muted{ color: var(--muted); }
+    .center{ text-align:center; }
+
+    /* --- Responsive --- */
+    @media (max-width: 960px){
+      .hero-grid{ grid-template-columns: 1fr; }
+      .tokenomics{ grid-template-columns: 1fr; }
+      .products{ grid-template-columns: 1fr; }
+      .pricing{ grid-template-columns: 1fr; }
+      .footgrid{ grid-template-columns: 1fr; }
+      .grid.features{ grid-template-columns: 1fr 1fr; }
+      .span-6, .span-8, .span-4{ grid-column: auto; }
+      .nav ul{ display:none; }
+    }
+    @media (prefers-reduced-motion: reduce){
+      .btn:hover, .card:hover{ transform: none; }
+      .bg-grid, .float-orb{ animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="float-orb orb-a"></div>
+  <div class="float-orb orb-b"></div>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a href="#top" class="brand" aria-label="Cyberdyne home">
+        <div class="logo" aria-hidden="true"></div>
+        <span>Cyberdyne</span>
+        <span class="chip" title="Max supply">25M MAX</span>
+      </a>
+      <ul aria-label="Primary">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#products">Products</a></li>
+        <li><a href="#tokenomics">Tokenomics</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#roadmap">Roadmap</a></li>
+        <li><a class="ghost" href="#contact">Get Started</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <div class="eyebrow">DAO‑first • AI + Web3</div>
+          <h1 class="title">
+            The <span class="gradient">developer platform</span> that <span class="gradient">pays for itself</span>
+          </h1>
+          <p class="subtitle">Cyberdyne lets startups build, automate and deploy with a treasury‑backed model. Host frontends, run APIs & automations, plug in LLMs — with a DAO that subsidizes ops from DeFi yields.</p>
+          <div class="actions">
+            <a class="btn primary" href="#contact" aria-label="Get started">
+              <!-- arrow icon -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+              Get started
+            </a>
+            <a class="btn" href="#features" aria-label="View features">
+              <!-- spark icon -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+              Explore features
+            </a>
+          </div>
+          <div class="hero-badges" aria-label="Highlights">
+            <span class="badge">Open‑source friendly</span>
+            <span class="badge">Arweave + IPFS</span>
+            <span class="badge">n8n automations</span>
+            <span class="badge">Supabase ready</span>
+          </div>
+        </div>
+        <div class="hero-panel" aria-label="Quickstart demo">
+          <div class="termbar">
+            <div class="dots" aria-hidden="true"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+            <span class="chip">quickstart.sh</span>
+          </div>
+          <div class="terminal" role="region" aria-live="polite">
+            <code>
+              <span class="prompt">$</span> npx create-cyberdyne@latest<Br>
+              ✔ Choose stack: <span class="muted">Svelte + Supabase + n8n</span><br>
+              ✔ Add storage: <span class="muted">Arweave/IPFS</span><br>
+              ✔ Enable LLMs: <span class="muted">OpenRouter / Local</span><br>
+              ⟳ Deploying to <span class="muted">static + edge</span>…<br>
+              <br>
+              <span class="muted">Your app is live:</span> https://cyb.dev/your-app ↗<br>
+              <span class="prompt">$</span> <span class="caret"></span>
+            </code>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section id="features" class="container">
+      <h2 class="section-title">Everything you need to ship fast</h2>
+      <p class="section-kicker">A sleek, pragmatic stack — batteries included.</p>
+      <div class="grid features">
+        <article class="card span-4">
+          <div class="shine" aria-hidden="true"></div>
+          <div class="icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 7h7l-5.5 4 2.5 7-6-4.5L7.5 20 10 13 4 9h7z"/></svg>
+          </div>
+          <h3>AI‑native</h3>
+          <p>First‑class LLM support: OpenRouter, local models, and tool integrations. Use RAG, embeddings and agents out of the box.</p>
+        </article>
+        <article class="card span-4">
+          <div class="shine"></div>
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg></div>
+          <h3>Web3‑ready</h3>
+          <p>EVM + Solana friendly. Wallet auth, token‑gated routes, and on‑chain analytics when you need them.</p>
+        </article>
+        <article class="card span-4">
+          <div class="shine"></div>
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
+          <h3>Automation, built‑in</h3>
+          <p>n8n flows for ETL, cron and webhooks. Ship workflows without wrangling servers.</p>
+        </article>
+        <article class="card span-6">
+          <div class="shine"></div>
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20l9-5-9-5-9 5 9 5z"/><path d="M12 12l9-5-9-5-9 5 9 5z"/></svg></div>
+          <h3>Data & Auth</h3>
+          <p>Supabase for Postgres, auth, storage. Ready for dashboards, analytics and audits.</p>
+        </article>
+        <article class="card span-6">
+          <div class="shine"></div>
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06A2 2 0 1 1 7.04 3.3l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V2a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c0 .68.27 1.33.75 1.81.48.48 1.13.75 1.81.75a2 2 0 1 1 0 4h-.09c-.68 0-1.33.27-1.81.75z"/></svg></div>
+          <h3>Observability</h3>
+          <p>Prometheus + Grafana ready. Logs, metrics and traces that don’t fight you.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- PRODUCTS -->
+    <section id="products" class="container">
+      <h2 class="section-title">Products</h2>
+      <p class="section-kicker">Opinionated tools built on Cyberdyne.</p>
+      <div class="products">
+        <article class="card product">
+          <div class="shine"></div>
+          <span class="tag">Alpha</span>
+          <h4>Study4Me</h4>
+          <p>Ingest YouTube, PDFs and docs ➜ build a Knowledge Graph and query with LLMs. Store to Arweave/IPFS, expose an MCP interface, generate audio classes.</p>
+          <div class="actions">
+            <a class="btn" href="#contact">Request access</a>
+            <a class="btn" href="#" aria-disabled="true">Docs</a>
+          </div>
+        </article>
+        <article class="card product">
+          <div class="shine"></div>
+          <span class="tag">Beta</span>
+          <h4>Liquidity4Me</h4>
+          <p>Uniswap V3 & Aave tooling for LPs. Simulate, monitor ranges, and automate hedges — with clear IL and fee analytics.</p>
+          <div class="actions">
+            <a class="btn" href="#contact">Join waitlist</a>
+            <a class="btn" href="#" aria-disabled="true">Docs</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- TOKENOMICS -->
+    <section id="tokenomics" class="container">
+      <h2 class="section-title">Tokenomics</h2>
+      <p class="section-kicker">Max supply: <strong>25,000,000</strong> CYBDY tokens. Example split below — subject to governance.</p>
+      <div class="tokenomics">
+        <div class="donut" role="img" aria-label="Example token distribution donut"></div>
+        <div>
+          <div class="legend" role="list">
+            <div class="item" role="listitem"><span class="swatch" style="background:var(--accent)"></span> Treasury (Ops Subsidy) — 40%</div>
+            <div class="item" role="listitem"><span class="swatch" style="background:var(--accent-2)"></span> Liquidity — 20%</div>
+            <div class="item" role="listitem"><span class="swatch" style="background:var(--accent-3)"></span> Community & Grants — 20%</div>
+            <div class="item" role="listitem"><span class="swatch" style="background:#7aa2ff"></span> Team (Vested) — 10%</div>
+            <div class="item" role="listitem"><span class="swatch" style="background:#ffd166"></span> Reserve — 10%</div>
+          </div>
+          <p class="muted" style="margin-top:.8rem">Note: figures are illustrative; final parameters are decided by DAO proposals.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRICING -->
+    <section id="pricing" class="container">
+      <h2 class="section-title">Pricing</h2>
+      <p class="section-kicker">Transparent, founder‑friendly. Bring your own cloud, or tap the DAO subsidy.</p>
+      <div class="pricing">
+        <article class="card price-card">
+          <div class="shine"></div>
+          <h3>Starter</h3>
+          <div class="price">$0 <small>/mo</small></div>
+          <ul class="features-list">
+            <li>Static hosting + edge functions</li>
+            <li>Community LLM endpoints</li>
+            <li>n8n starter workflows</li>
+          </ul>
+          <div class="actions" style="margin-top:.8rem"><a class="btn" href="#contact">Spin up</a></div>
+        </article>
+        <article class="card price-card">
+          <div class="shine"></div>
+          <h3>Scale</h3>
+          <div class="price">Custom</div>
+          <ul class="features-list">
+            <li>SLA, SSO, dedicated nodes</li>
+            <li>Observability suite</li>
+            <li>Consulting & integrations</li>
+          </ul>
+          <div class="actions" style="margin-top:.8rem"><a class="btn" href="#contact">Talk to us</a></div>
+        </article>
+        <article class="card price-card">
+          <div class="shine"></div>
+          <h3>DAO Mode</h3>
+          <div class="price">Subsidized</div>
+          <ul class="features-list">
+            <li>Treasury‑backed ops credits</li>
+            <li>On‑chain billing transparency</li>
+            <li>Governance‑driven pricing</li>
+          </ul>
+          <div class="actions" style="margin-top:.8rem"><a class="btn" href="#contact">Explore</a></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ROADMAP -->
+    <section id="roadmap" class="container">
+      <h2 class="section-title">Roadmap</h2>
+      <p class="section-kicker">What we’re shipping next.</p>
+      <div class="timeline">
+        <div class="milestone">
+          <h4>Q3 2025 — Cyberdyne MVP</h4>
+          <p>Landing + static hosting, Study4Me alpha, treasury dashboard, docs preview.</p>
+        </div>
+        <div class="milestone">
+          <h4>Q4 2025 — DAO & Subsidies</h4>
+          <p>Snapshot/Aragon proposals, on‑chain billing, n8n templates library, Liquidity4Me beta.</p>
+        </div>
+        <div class="milestone">
+          <h4>Q1 2026 — Multi‑chain Compute</h4>
+          <p>Edge workers, GPU add‑ons, local LLM orchestration, observability suite GA.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="container">
+      <h2 class="section-title">Get started</h2>
+      <p class="section-kicker">Tell us a bit about your project. We’ll respond with setup steps and an access link.</p>
+      <form class="card" style="padding:1rem" onsubmit="mailtoSubmit(event)">
+        <div class="shine"></div>
+        <div class="grid" style="grid-template-columns:1fr 1fr; gap: .8rem">
+          <label> 
+            <div class="muted" style="font-size:.9rem">Name</div>
+            <input required name="name" class="in" type="text" placeholder="Ada Lovelace" />
+          </label>
+          <label>
+            <div class="muted" style="font-size:.9rem">Email</div>
+            <input required name="email" class="in" type="email" placeholder="you@startup.dev" />
+          </label>
+          <label class="span-8" style="grid-column:1/-1">
+            <div class="muted" style="font-size:.9rem">What are you building?</div>
+            <textarea required name="message" class="in" rows="4" placeholder="Briefly describe your product and stack (Svelte, Supabase, n8n, LLMs…)"></textarea>
+          </label>
+        </div>
+        <div class="actions" style="margin-top:.8rem">
+          <button class="btn primary" type="submit">Send</button>
+          <button class="btn" type="button" onclick="toggleFX()">Toggle FX</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <footer class="container">
+    <div class="footgrid">
+      <div>
+        <div class="brand" style="margin-bottom:.4rem"><div class="logo"></div><span>Cyberdyne</span></div>
+        <p class="muted">A DAO‑first developer platform. Build with AI + Web3 and ship faster — neon‑smooth.</p>
+      </div>
+      <div>
+        <div class="muted">Social</div>
+        <div class="socials" aria-label="Social links">
+          <a href="#" aria-label="GitHub">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.58 2 12.26c0 4.52 2.87 8.35 6.84 9.71.5.1.68-.22.68-.49 0-.24-.01-.87-.01-1.71-2.78.61-3.37-1.37-3.37-1.37-.46-1.2-1.12-1.52-1.12-1.52-.92-.64.07-.63.07-.63 1.02.07 1.55 1.07 1.55 1.07.9 1.57 2.36 1.12 2.94.86.09-.67.35-1.12.64-1.37-2.22-.26-4.56-1.13-4.56-5.05 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.29.1-2.69 0 0 .84-.27 2.75 1.05A9.3 9.3 0 0 1 12 7.47c.85 0 1.7.12 2.5.35 1.9-1.32 2.74-1.05 2.74-1.05.56 1.4.21 2.43.1 2.69.64.72 1.03 1.63 1.03 2.75 0 3.93-2.35 4.78-4.58 5.04.36.32.68.95.68 1.92 0 1.38-.01 2.49-.01 2.83 0 .27.18.6.69.49A10.4 10.4 0 0 0 22 12.26C22 6.58 17.52 2 12 2Z"/></svg>
+          </a>
+          <a href="#" aria-label="X (Twitter)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 3h5.2l5.2 7.9L18.8 3H21l-6.8 10.4L21 21h-5.2l-5.3-8.1L5.2 21H3l6.9-10.4L3 3Z"/></svg>
+          </a>
+          <a href="#" aria-label="Email">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm8 9L4.5 6.5h15L12 13Z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <p class="muted" style="margin-top:1rem; font-size:.9rem">© <span id="year"></span> Cyberdyne. All rights reserved.</p>
+  </footer>
+
+  <style>
+    /* Inputs at bottom to avoid FOUC */
+    .in{ width:100%; margin-top:.25rem; background: #060913; border:1px solid rgba(255,255,255,.12); color: var(--ink); border-radius: 12px; padding:.8rem .9rem; outline:none; }
+    .in:focus{ border-color: var(--ring); box-shadow: 0 0 0 6px rgba(0,229,255,.08); }
+  </style>
+
+  <script>
+    // Smooth scroll & background mouse parallax
+    document.documentElement.style.scrollBehavior = 'smooth';
+    const grid = document.querySelector('.bg-grid');
+    window.addEventListener('pointermove', (e) => {
+      const x = (e.clientX / innerWidth * 100).toFixed(2) + '%';
+      const y = (e.clientY / innerHeight * 100).toFixed(2) + '%';
+      grid && grid.style.setProperty('--mx', x);
+      grid && grid.style.setProperty('--my', y);
+    });
+
+    // Toggle FX for reduced motion / low-power
+    function toggleFX(){
+      const cls = document.body.classList;
+      cls.toggle('no-fx');
+      const off = cls.contains('no-fx');
+      document.querySelectorAll('.float-orb').forEach(el => el.style.animation = off ? 'none' : '');
+      document.querySelectorAll('.btn, .card').forEach(el => el.style.transform = '');
+    }
+
+    // Mailto submit (no backend required)
+    function mailtoSubmit(e){
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const name = encodeURIComponent(fd.get('name'));
+      const email = encodeURIComponent(fd.get('email'));
+      const msg = encodeURIComponent(fd.get('message'));
+      const subject = `Cyberdyne — Access Request from ${name}`;
+      const body = `Name: ${name}%0AEmail: ${email}%0A%0A${msg}`;
+      window.location.href = `mailto:hello@cyberdyne.dev?subject=${subject}&body=${body}`;
+    }
+
+    // Set current year
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
